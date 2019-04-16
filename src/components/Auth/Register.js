@@ -1,4 +1,5 @@
 import React from "react";
+import firebase from "../../firebase";
 import {
   Grid,
   Form,
@@ -11,11 +12,29 @@ import {
 import {Link} from "react-router-dom";
 
 class Register extends React.Component {
-  state = {};
+  state = {
+    username: "",
+    email: "",
+    password: "",
+    passwordConfirmation: ""
+  };
 
-  handleChange = () => {};
+  handleChange = e => this.setState({[e.target.name]: e.target.value});
+
+  handleSubmit = e => {
+    e.preventDefault();
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(this.state.email, this.state.password) // a Promise
+      .then(createdUser => console.log(createdUser))
+      .catch(err => console.log(err));
+    // Error: "The given sign-in provider is disabled"
+    // Firebase dashboard -> Authentication -> Email/Password -> Enable
+  };
 
   render() {
+    const {username, email, password, passwordConfirmation} = this.state;
+
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{maxWidth: 450}}>
@@ -24,7 +43,7 @@ class Register extends React.Component {
               Register for DevChat
             </Icon>
           </Header>
-          <Form size="large">
+          <Form size="large" onSubmit={this.handleSubmit}>
             <Segment stacked>
               <Form.Input
                 fluid
@@ -33,6 +52,7 @@ class Register extends React.Component {
                 iconPosition="left"
                 placeholder="Username"
                 onChange={this.handleChange}
+                value={username}
                 type="text"
               />
               <Form.Input
@@ -42,6 +62,7 @@ class Register extends React.Component {
                 iconPosition="left"
                 placeholder="Email Address"
                 onChange={this.handleChange}
+                value={email}
                 type="text"
               />
               <Form.Input
@@ -51,6 +72,7 @@ class Register extends React.Component {
                 iconPosition="left"
                 placeholder="Password"
                 onChange={this.handleChange}
+                value={password}
                 type="password"
               />
               <Form.Input
@@ -60,6 +82,7 @@ class Register extends React.Component {
                 iconPosition="left"
                 placeholder="Password Confirmation"
                 onChange={this.handleChange}
+                value={passwordConfirmation}
                 type="password"
               />
 
@@ -76,9 +99,5 @@ class Register extends React.Component {
     );
   }
 }
-
-/* 
-Grid - structures content within components
-*/
 
 export default Register;
