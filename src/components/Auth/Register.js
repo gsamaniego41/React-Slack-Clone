@@ -17,7 +17,8 @@ class Register extends React.Component {
     email: "",
     password: "",
     passwordConfirmation: "",
-    errors: []
+    errors: [],
+    loading: false
   };
 
   isFormValid = () => {
@@ -66,16 +67,38 @@ class Register extends React.Component {
   handleChange = e => this.setState({[e.target.name]: e.target.value});
 
   handleSubmit = e => {
+    e.preventDefault();
     if (this.isFormValid()) {
-      e.preventDefault();
+      this.setState({errors: [], loading: true});
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password) // a Promise
-        .then(createdUser => console.log(createdUser))
-        .catch(err => console.log(err));
+        .then(createdUser => {
+          console.log(createdUser);
+          this.setState({loading: false});
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({
+            errors: this.state.errors.concat(err),
+            loading: false
+          });
+        });
       // Error: "The given sign-in provider is disabled"
       // Firebase dashboard -> Authentication -> Email/Password -> Enable
     }
+  };
+
+  handleInputError = (errors, inputName) => {
+    // Makes input error dynamic
+    // counterpart of handle change
+    return errors.some(
+      error =>
+        error.message.toLowerCase().includes(inputName) ||
+        error.message.toLowerCase().includes("all")
+    )
+      ? "error"
+      : "";
   };
 
   render() {
@@ -84,7 +107,8 @@ class Register extends React.Component {
       email,
       password,
       passwordConfirmation,
-      errors
+      errors,
+      loading
     } = this.state;
 
     return (
@@ -105,6 +129,11 @@ class Register extends React.Component {
                 placeholder="Username"
                 onChange={this.handleChange}
                 value={username}
+                className={this.handleInputError(errors, "username")}
+                // The some() method tests whether at least one element in the array
+                // passes the test implemented by the provided function.
+                // If at least 1 item in the arr meets the condition - it's true,
+                // if no items in the arr meets the condition - it's false
                 type="text"
               />
               <Form.Input
@@ -115,6 +144,7 @@ class Register extends React.Component {
                 placeholder="Email Address"
                 onChange={this.handleChange}
                 value={email}
+                className={this.handleInputError(errors, "email")}
                 type="text"
               />
               <Form.Input
@@ -125,6 +155,7 @@ class Register extends React.Component {
                 placeholder="Password"
                 onChange={this.handleChange}
                 value={password}
+                className={this.handleInputError(errors, "password")}
                 type="password"
               />
               <Form.Input
@@ -135,10 +166,18 @@ class Register extends React.Component {
                 placeholder="Password Confirmation"
                 onChange={this.handleChange}
                 value={passwordConfirmation}
+                className={this.handleInputError(errors, "password")}
                 type="password"
               />
 
-              <Button color="orange" fluid size="large">
+              {/* Loading button */}
+              <Button
+                disabled={loading} // bec loading evaluates to TRUE : FALSE
+                className={loading ? "loading" : ""}
+                color="orange"
+                fluid
+                size="large"
+              >
                 Submit
               </Button>
             </Segment>
@@ -157,5 +196,11 @@ class Register extends React.Component {
     );
   }
 }
+
+/* 
+Problem: 
+- It's possible to hit Submit twice
+- We're not clearing errors when registration is successful
+*/
 
 export default Register;
