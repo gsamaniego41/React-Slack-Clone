@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import Login from "./components/Auth/Login";
+import Spinner from "./Spinner";
 import Register from "./components/Auth/Register";
 import firebase from "./firebase";
 // Using a listener from firebase
@@ -38,7 +39,9 @@ class Root extends React.Component {
   }
 
   render() {
-    return (
+    return this.props.isLoading ? (
+      <Spinner />
+    ) : (
       <Switch>
         <Route path="/" exact component={App} />
         <Route path="/login" component={Login} />
@@ -48,9 +51,13 @@ class Root extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  isLoading: state.user.isLoading
+});
+
 const RootWithAuth = withRouter(
   connect(
-    null,
+    mapStateToProps,
     {setUser}
   )(Root)
 ); // puts the history obj in Root component
