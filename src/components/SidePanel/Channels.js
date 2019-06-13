@@ -20,6 +20,17 @@ class Channels extends Component {
     this.addListeners();
   }
 
+  componentWillUnmount() {
+    // cleanup listeners when we routing to a different page
+    // don't listen to an event that won't take place
+    // potential error: can't set state in an unmounted component
+    this.removeListeners();
+  }
+
+  removeListeners = () => {
+    this.state.channelsRef.off();
+  };
+
   addListeners = () => {
     let loadedChannels = [];
 
