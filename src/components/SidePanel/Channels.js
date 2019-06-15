@@ -119,7 +119,6 @@ class Channels extends Component {
 
   render() {
     const {channels, modal} = this.state;
-    console.log(this.state.channels);
     return (
       <>
         <Menu.Menu style={{paddingBottom: "2em"}}>
