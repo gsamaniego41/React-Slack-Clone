@@ -37,7 +37,8 @@ class MessagesForm extends React.Component {
 
       messagesRef
         .child(channel.id)
-        .push.set(this.createMessage())
+        .push()
+        .set(this.createMessage())
         .then(() => {
           this.setState({loading: false, message: "", errors: []});
         })
@@ -56,13 +57,14 @@ class MessagesForm extends React.Component {
   };
 
   render() {
-    const {errors} = this.state;
+    const {errors, message, loading} = this.state;
 
     return (
       <Segment className="message__form">
         <Input
           fluid
           name="message"
+          value={message}
           onChange={this.handleChange}
           style={{marginBottom: "0.7em"}}
           label={<Button icon={"add"} />}
@@ -81,12 +83,14 @@ class MessagesForm extends React.Component {
             content="Add Reply"
             labelPosition="left"
             icon="edit"
+            disabled={loading}
           />
           <Button
             color="teal"
             content="Upload Media"
             labelPosition="right"
             icon="cloud upload"
+            disabled={loading}
           />
         </Button.Group>
       </Segment>

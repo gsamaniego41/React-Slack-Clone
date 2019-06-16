@@ -22,7 +22,7 @@ class Messages extends Component {
           <Comment.Group className="messages">{/* Messages */}</Comment.Group>
         </Segment>
         <MessagesForm
-          messageRef={messagesRef}
+          messagesRef={messagesRef}
           currentChannel={channel}
           currentUser={currentUser}
         />
