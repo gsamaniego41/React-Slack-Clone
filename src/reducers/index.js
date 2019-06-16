@@ -1,6 +1,5 @@
 import {combineReducers} from "redux";
 import * as actionTypes from "../actions/types";
-import {root} from "postcss";
 
 const initialUserState = {
   currentUser: null,
